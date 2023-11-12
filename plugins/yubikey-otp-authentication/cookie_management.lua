@@ -12,7 +12,7 @@ local env = require "yubikey-otp-authentication.env"
 
 -- Create a cookie string
 function _M.build_http_cookie(cookie_value, domain, expires)
-    local set_cookie = string.format("%s=%s; Path=/; Expires=%s; HttpOnly; Domain %s; SameSite=%s; %s", env.yubikey_cookie_name, cookie_value, expires, domain, env.yubikey_cookie_security, env.cookie_secure_flag)
+    local set_cookie = string.format("%s=%s; Path=/; Expires=%s; HttpOnly; Domain %s; SameSite=%s; %s", env.yubikey_cookie_name, cookie_value, expires, domain, env.yubikey_cookie_samesite, env.yubikey_cookie_secure)
     return set_cookie
 end
 

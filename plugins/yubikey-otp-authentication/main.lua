@@ -7,6 +7,7 @@ local string = require "string"
 local env = require "yubikey-otp-authentication.env"
 local login = require "yubikey-otp-authentication.login_page"
 local process = require "yubikey-otp-authentication.request_processes"
+local utils = require "yubikey-otp-authentication.utils"
 
 local function run()
     -- Grab cookie in all requests, 
@@ -34,11 +35,12 @@ local function run()
             ngx.log(ngx.ERR, display_err)
             login.display_login_portal(display_err)
         end
-        -- Append the into the request so it gets sent back to our client
+        -- Return back just cookie and redirect to the original request
+        ngx.header["Location"] = utils.location_header_build()
         ngx.header["Set-Cookie"] = build_cookie
-        -- Request is allowed to continue to our system as normal from this point on
-    
-    
+        local status = ngx.HTTP_MOVED_TEMPORARILY
+        ngx.status = status
+        ngx.exit(status)
     else
         -- Ensure the request contains the login cookie or return for login
         if auth_cookie then

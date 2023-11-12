@@ -24,4 +24,15 @@ function _M.generate_nonce()
     return nonce
 end
 
+function _M.location_header_build(scheme, host, uri, query_string)
+    scheme = scheme or ngx.var.scheme
+    host = host or ngx.var.host
+    uri = uri or ngx.var.uri
+    local location_header = scheme .. "://" .. host .. uri
+    if query_string then
+        location_header = location_header .. "?" .. query_string
+    end
+    return location_header
+end
+
 return _M

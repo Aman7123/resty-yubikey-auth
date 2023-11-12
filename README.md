@@ -1,6 +1,6 @@
-## Yubikey OTP Auth
+## Openresty Yubikey OTP Auth
 
-This is a plugin for OpenResty Nginx that allows you to integrate YubiKey OTP authentication into your OpenResty applications. The plugin is designed to run within an Nginx block from a single call, providing a seamless and efficient authentication process.
+This is a plugin for OpenResty Nginx that 2FA with a YubiKey OTP. The plugin is designed to run within an Nginx block from a single call, providing a seamless and efficient authentication process.
 
 ### Prerequisites
 
