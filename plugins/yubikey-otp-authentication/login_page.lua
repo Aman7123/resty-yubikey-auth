@@ -108,7 +108,7 @@ local html_body = [[
             <script>%s</script>
         </head>
         <body>
-            <form method="post">
+            <form method="post" action="/">
                 <h1>OTP Login</h1>
                 <div class="error-message">%s</div>
                 <label>OTP </label>
