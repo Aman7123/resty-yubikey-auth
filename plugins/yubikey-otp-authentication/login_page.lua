@@ -25,24 +25,26 @@ local html_body = [[
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <!-- Bootswatch Darkly Theme -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/darkly/bootstrap.min.css">
         <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,%s">
     </head>
-    <body class="bg-light">
+    <body class="bg-dark text-light">
         <div class="container">
             <div class="row justify-content-center align-items-center min-vh-100">
                 <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
                     <!-- Error Message Alert -->
                     <div id="error-alert" class="alert alert-danger d-none" role="alert">%s</div>
                     <!-- Main Login Card -->
-                    <div class="card border-0 shadow-sm">
+                    <div class="card bg-secondary border-0 shadow">
                         <div class="card-body">
                             <form action="/" method="post" class="p-4" id="login-form">
                                 <h2 class="text-center mb-4">OTP Login</h2>
                                 <div class="form-group">
-                                    <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter OTP" required autofocus>
+                                    <!-- Adjusted input style for consistency -->
+                                    <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter OTP" required autofocus style="width: 100%%;">
                                 </div>
-                                <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+                                <button class="btn btn-success btn-block" type="submit">Submit</button>
                             </form>
                         </div>
                         <div class="card-footer text-muted text-center">
@@ -53,7 +55,6 @@ local html_body = [[
                 </div>
             </div>
         </div>
-        <!-- JavaScript for OTP Validation -->
         <script>%s</script>
     </body>
     </html>
