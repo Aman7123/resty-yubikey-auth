@@ -1,5 +1,5 @@
 -- Main Checkpoints
---  To reduce the amount of logic in the main function, we have broken these functions out
+-- To reduce the amount of logic in the main function, we have broken these functions out
 -- 
 
 local _M = {}
@@ -7,14 +7,14 @@ local _M = {}
 local ngx = require "ngx"
 local env = require "yubikey-otp-authentication.env"
 local cookies = require "yubikey-otp-authentication.cookie_management"
-local yubi_auth = require "yubikey-otp-authentication.authentication"
+local auth = require "yubikey-otp-authentication.authentication"
 
 -- This function helps break up so much logic in the main function.
 -- Function is called after the login page is displayed and a POST request is made
 function _M.handle_post_request(args)
     local otp = args.otp
     if otp then
-        local ok, err_code, err_msg = yubi_auth.get_and_verify_otp(otp)
+        local ok, err_code, err_msg = auth.verify(otp)
         if ok then
             -- Cookie generate new expiration and domain to setup
             local expires = ngx.cookie_time(ngx.time() + env.cookie_ttl)

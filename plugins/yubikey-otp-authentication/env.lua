@@ -6,8 +6,7 @@ local _M = {}
 local os = require "os"
 local errors = require "yubikey-otp-authentication.error_handling"
 
--- _M.key = "otp"
--- _M.key_length = 44
+_M.key_length = 44
 _M.request_id = os.getenv("YUBIKEY_REQUEST_ID")
 _M.authorized_keys = os.getenv("YUBIKEY_AUTHORIZED_KEYS")
 _M.cookie_secret = os.getenv("YUBIKEY_COOKIE_SECRET")
@@ -22,7 +21,7 @@ if not _M.request_id then
 elseif not _M.cookie_secret then
     errors.log("YUBIKEY_COOKIE_SECRET environment variable not set")
 elseif not _M.authorized_keys then
-    errors.log("YUBIKEYS_AUTHORIZED_KEYS environment variable not set")
+    errors.log("YUBIKEY_AUTHORIZED_KEYS environment variable not set")
 end
 
 return _M
