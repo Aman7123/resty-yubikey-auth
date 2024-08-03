@@ -47,7 +47,7 @@ The plugin stores the the environment in code within `env.lua`. You can set the 
 | Environment Variable | Default | Description |
 | --- | --- | --- |
 | `YUBIKEY_REQUEST_ID` | REQUIRED | A unique ID which identifies you the requestor |
-| `YUBIKEYS_AUTHORIZED_KEYS` | REQUIRED | Accepts a CSV of authorized [YubiKey IDs](https://developers.yubico.com/OTP/OTPs_Explained.html) |
+| `YUBIKEY_AUTHORIZED_KEYS` | REQUIRED | Accepts a CSV of authorized [YubiKey IDs](https://developers.yubico.com/OTP/OTPs_Explained.html) |
 | `YUBIKEY_COOKIE_SECRET` | REQUIRED | A secret used to encrypt the cookie |
 | `YUBIKEY_COOKIE_NAME` | `OTP` | The name of the cookie |
 | `YUBIKEY_COOKIE_SAMESITE` | `Strict` | [Mozilla Cookie SameSite](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value) |
@@ -57,7 +57,7 @@ The plugin stores the the environment in code within `env.lua`. You can set the 
 ### Verification Backend
 This plugin utilizes the [Yubico WSAPI](https://developers.yubico.com/wsapi/2.0/otp/verify-otp.html) to verify the OTP.
 
-After verification from Yubico the `YUBIKEYS_AUTHORIZED_KEYS` from the environment is used to authorize the "user".
+After verification from Yubico the `YUBIKEY_AUTHORIZED_KEYS` from the environment is used to authorize the "user".
 
 ### OTP Input Form
 
