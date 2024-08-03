@@ -6,7 +6,6 @@ local _M = {}
 local ngx = require "ngx"
 local math = require "math"
 local http = require "resty.http"
-local env = require "yubikey-otp-authentication.env"
 
 -- Function to pull random url
 local function choose_random_lb_address()
@@ -15,9 +14,9 @@ local function choose_random_lb_address()
 end
 
 -- Make HTTP request to Yubico API
-function _M.yubico_verification_server(otp, yubikey_request_id, nonce)
+function _M.yubico_verification_server(otp, request_id, nonce)
     local httpc = http.new()
-    local uri = string.format("https://%s/wsapi/2.0/verify?id=%s&otp=%s&nonce=%s", choose_random_lb_address(), env.yubikey_request_id, otp, nonce)
+    local uri = string.format("https://%s/wsapi/2.0/verify?id=%s&otp=%s&nonce=%s", choose_random_lb_address(), request_id, otp, nonce)
     local res, err = httpc:request_uri(uri, {
         method = "GET",
         headers = {

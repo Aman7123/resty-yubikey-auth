@@ -13,8 +13,8 @@ local yubi_http = require "yubikey-otp-authentication.yubikey_http"
 local function is_authorized_yubikey(otp)
     local key_id = string.sub(otp, 1, 12)  -- Assumes the first 12 characters are the key ID
 
-    -- Split yubikeys_authorized_keys into individual keys
-    for authorized_key in string.gmatch(env.yubikeys_authorized_keys, '([^,]+)') do
+    -- Split authorized_keys into individual keys
+    for authorized_key in string.gmatch(env.authorized_keys, '([^,]+)') do
         if key_id == authorized_key then
             return true, authorized_key
         end
@@ -70,7 +70,7 @@ function _M.get_and_verify_otp(otp)
     local nonce = utils.generate_nonce()
 
     -- Send HTTP request to Yubico API
-    local status, res, code, err = yubi_http.yubico_verification_server(otp, env.yubikey_request_id, nonce)
+    local status, res, code, err = yubi_http.yubico_verification_server(otp, env.request_id, nonce)
     if not status then
         return false, code, err
     end

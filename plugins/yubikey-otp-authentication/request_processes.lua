@@ -17,7 +17,7 @@ function _M.handle_post_request(args)
         local ok, err_code, err_msg = yubi_auth.get_and_verify_otp(otp)
         if ok then
             -- Cookie generate new expiration and domain to setup
-            local expires = ngx.cookie_time(ngx.time() + env.yubikey_cookie_ttl)
+            local expires = ngx.cookie_time(ngx.time() + env.cookie_ttl)
             local domain = ngx.var.host
             -- Generate our cookie json structure with new hash
             local cookie_value = cookies.generate_cookie(otp, domain, expires)
@@ -40,7 +40,7 @@ function _M.handle_existing_cookie(auth_cookie)
     local valid, cookie_raw_json = cookies.validate_cookie(auth_cookie)
     if valid then
         -- Cookie generate new expiration
-        local expires = ngx.cookie_time(ngx.time() + env.yubikey_cookie_ttl)
+        local expires = ngx.cookie_time(ngx.time() + env.cookie_ttl)
         -- Generate our cookie json structure with new hash
         local cookie_value = cookies.generate_cookie(cookie_raw_json.otp, cookie_raw_json.domain, expires)
         -- Build the http string for our cookie

@@ -12,7 +12,7 @@ local env = require "yubikey-otp-authentication.env"
 
 -- Create a cookie string
 function _M.build_http_cookie(cookie_value, domain, expires)
-    local set_cookie = string.format("%s=%s; Path=/; Expires=%s; HttpOnly; Domain %s; SameSite=%s; %s", env.yubikey_cookie_name, cookie_value, expires, domain, env.yubikey_cookie_samesite, env.yubikey_cookie_secure)
+    local set_cookie = string.format("%s=%s; Path=/; Expires=%s; HttpOnly; Domain %s; SameSite=%s; %s", env.cookie_name, cookie_value, expires, domain, env.cookie_samesite, env.cookie_secure)
     return set_cookie
 end
 
@@ -31,10 +31,10 @@ end
 function _M.generate_cookie_hash(otp, domain, expires)
     local sha256 = resty_sha256:new()
     sha256:update(otp)
-    sha256:update(env.yubikey_request_id)
+    sha256:update(env.request_id)
     sha256:update(domain)
     sha256:update(expires)
-    sha256:update(env.yubikey_cookie_secret)
+    sha256:update(env.cookie_secret)
     local digest = sha256:final()
     return resty_str.to_hex(digest)
 end

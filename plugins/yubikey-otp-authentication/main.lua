@@ -11,7 +11,7 @@ local utils = require "yubikey-otp-authentication.utils"
 
 local function run()
     -- Grab cookie in all requests, 
-    local auth_cookie = ngx.var["cookie_" .. env.yubikey_cookie_name]
+    local auth_cookie = ngx.var["cookie_" .. env.cookie_name]
     
     local request
     -- In this if statement we check the POST with the uri to ensure 
