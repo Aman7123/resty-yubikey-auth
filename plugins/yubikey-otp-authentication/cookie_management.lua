@@ -10,28 +10,9 @@ local resty_sha256 = require "resty.sha256"
 local resty_str = require "resty.string"
 local env = require "yubikey-otp-authentication.env"
 
--- Create a cookie string
-function _M.build_http_cookie(cookie_value, domain, expires)
-    local set_cookie = string.format("%s=%s; Path=/; Expires=%s; HttpOnly; Domain %s; SameSite=%s; %s", env.cookie_name, cookie_value, expires, domain, env.cookie_samesite, env.cookie_secure)
-    return set_cookie
-end
-
--- uses sha256 lib to gen a base64 encoded string of a json token
-function _M.generate_cookie(otp, domain, expires)
-    local cookie_raw_json = {
-        otp = otp,
-        hash = _M.generate_cookie_hash(otp, domain, expires),
-        domain = domain,
-        expires = expires
-    }
-    local cookie_string = cjson.encode(cookie_raw_json)
-    return ngx.encode_base64(cookie_string)
-end
-
-function _M.generate_cookie_hash(otp, domain, expires)
+local function generate_cookie_hash(i, domain, expires)
     local sha256 = resty_sha256:new()
-    sha256:update(otp)
-    sha256:update(env.request_id)
+    sha256:update(i)
     sha256:update(domain)
     sha256:update(expires)
     sha256:update(env.cookie_secret)
@@ -39,10 +20,33 @@ function _M.generate_cookie_hash(otp, domain, expires)
     return resty_str.to_hex(digest)
 end
 
+-- uses sha256 lib to gen a base64 encoded string of a json token
+local function generate_cookie(i, domain, expires)
+    local cookie_raw_json = {
+        [env.key] = i,
+        domain = domain,
+        expires = expires,
+        hash = generate_cookie_hash(i, domain, expires),
+    }
+    local cookie_string = cjson.encode(cookie_raw_json)
+    return ngx.encode_base64(cookie_string)
+end
+
+-- Create a cookie string
+function _M.build_http_cookie(i)
+    -- Cookie generate new expiration and domain to setup
+    local expires = ngx.cookie_time(ngx.time() + env.cookie_ttl)
+    local domain = ngx.var.host
+    -- Generate our cookie json structure with new hash
+    local cookie_value = generate_cookie(i, domain, expires)
+
+    local set_cookie = string.format("%s=%s; Path=/; Expires=%s; HttpOnly; Domain %s; SameSite=%s; %s", env.cookie_name, cookie_value, expires, domain, env.cookie_samesite, env.cookie_secure)
+    return set_cookie
+end
 
 -- decodes the base64 cookie and validates the hash based on provided and known info
-function _M.validate_cookie(cookie)
-    local b64_status, cookie_value = pcall(ngx.decode_base64, cookie)
+function _M.validate_cookie(i)
+    local b64_status, cookie_value = pcall(ngx.decode_base64, i)
     if not b64_status then
         return false, "Failed to decode base64"
     end
@@ -53,9 +57,11 @@ function _M.validate_cookie(cookie)
     if ngx.time() > ngx.parse_http_time(cookie_raw_json.expires) then
         return false, "Cookie expired"
     end
-    local cookie_hash = _M.generate_cookie_hash(cookie_raw_json.otp, cookie_raw_json.domain, cookie_raw_json.expires)
-    return cookie_hash == cookie_raw_json.hash, cookie_raw_json
+    local cookie_hash = generate_cookie_hash(cookie_raw_json[env.key], cookie_raw_json.domain, cookie_raw_json.expires)
+    if not (cookie_hash == cookie_raw_json.hash) then
+        return false, "Cookie signature mismatch"
+    end
+    return true, cookie_raw_json
 end
-
 
 return _M

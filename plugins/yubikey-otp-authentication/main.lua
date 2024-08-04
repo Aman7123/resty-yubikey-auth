@@ -22,25 +22,24 @@ local function run()
         if not request then
             local display_err = string.format("Failed: %s", err)
             ngx.log(ngx.ERR, display_err)
-            login.display_login_portal(display_err)
+            login.display_login_portal(ngx.HTTP_BAD_REQUEST, display_err)
         end
     end
    
-    -- When a POST occurs with an otp value, we need to validate it and generate a cookie
-    if request and request["otp"] then
+    -- When a POST occurs with an key value, we need to validate it and generate a cookie
+    if request and request[env.key] then
         -- Generate our cookie using custom algorithms
         local build_cookie, post_err_code, post_err = process.handle_post_request(request)
         if not build_cookie then
             local display_err = post_err_code .. " - " .. post_err
             ngx.log(ngx.ERR, display_err)
-            login.display_login_portal(display_err)
+            login.display_login_portal(post_err_code, display_err)
         end
         -- Return back just cookie and redirect to the original request
         ngx.header["Location"] = utils.location_header_build()
         ngx.header["Set-Cookie"] = build_cookie
-        local status = ngx.HTTP_MOVED_TEMPORARILY
-        ngx.status = status
-        ngx.exit(status)
+        ngx.status = ngx.HTTP_MOVED_TEMPORARILY
+        ngx.exit(ngx.HTTP_OK)
     else
         -- Ensure the request contains the login cookie or return for login
         if auth_cookie then
@@ -49,7 +48,7 @@ local function run()
             if not handle_cookie then
                 local display_err = cook_err_code .. " - " .. cook_err
                 ngx.log(ngx.ERR, display_err)
-                login.display_login_portal(display_err)
+                login.display_login_portal(cook_err_code, display_err)
             end
             -- Append our new cookie into the request so the client can use it
             ngx.header["Set-Cookie"] = handle_cookie

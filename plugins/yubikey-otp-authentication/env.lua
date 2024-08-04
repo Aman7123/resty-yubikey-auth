@@ -1,16 +1,19 @@
--- Environment
+-- Environment Module
 -- This modules loads from os
 -- 
 
 local _M = {}
+
+-- TODO: Migrate away from syscall for envvar
 local os = require "os"
 local errors = require "yubikey-otp-authentication.error_handling"
 
+_M.key = "otp"
 _M.key_length = 44
 _M.request_id = os.getenv("YUBIKEY_REQUEST_ID")
 _M.authorized_keys = os.getenv("YUBIKEY_AUTHORIZED_KEYS")
 _M.cookie_secret = os.getenv("YUBIKEY_COOKIE_SECRET")
-_M.cookie_name = os.getenv("YUBIKEY_COOKIE_NAME") or "otp"
+_M.cookie_name = os.getenv("YUBIKEY_COOKIE_NAME") or _M.key
 _M.cookie_secure = os.getenv("YUBIKEY_COOKIE_SECURITY") or "Secure"
 _M.cookie_samesite = os.getenv("YUBIKEY_COOKIE_SAMESITE") or "Strict"
 _M.cookie_ttl = os.getenv("YUBIKEY_COOKIE_TTL") or 1800
