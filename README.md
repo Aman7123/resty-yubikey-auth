@@ -16,7 +16,6 @@ This process will guide you through installing the plugin into the OpenResty Lua
 2. Add `lua_package_path` to the core Nginx configuration.
   - Make sure that persistent volume in Nginx is configured to a location like `./lua:/usr/local/openresty/nginx/lua:ro`.
   - In `nginx.conf` setup `lua_package_path '/usr/local/openresty/nginx/lua/plugins/?.lua;;';`.
-  - NOTE: It is recommended to use a custom path and add it to the `lua_package_path` directive as opposed to using some existing path in the ENV.
 3. Place the `plugins/` folder for this repo into that `lua/` directory for the docker compose.
 
 ### Usage
