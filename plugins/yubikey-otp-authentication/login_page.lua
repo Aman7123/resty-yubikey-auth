@@ -1,6 +1,6 @@
 -- Login Display
 -- The login code and prompt engine
--- 
+--
 
 local _M = {}
 
@@ -62,7 +62,7 @@ local html_body = [[
     </html>
 ]]
 
-local function format_body(i, error_text, script_block)
+local function format_body(i, error_text, scrpt_blok)
     local res = i
     -- Generic
     res = res:gsub("{{name}}", env.key)
@@ -75,23 +75,22 @@ local function format_body(i, error_text, script_block)
     if error_text then
         res = res:gsub("{{error}}", error_text)
     end
-    if script_block then
-        res = res:gsub("{{script}}", script_block)
+    if scrpt_blok then
+        res = res:gsub("{{script}}", scrpt_blok)
     end
     return res
 end
 
 function _M.display_login_portal(err_code, err_msg)
     local res_status = err_code or ngx.HTTP_OK
-    local ip = ngx.var.remote_addr
     local modified_script = format_body(script_block)
     local modified_html = format_body(html_body, err_msg, modified_script)
-    
+
     -- Correctly assign the result of gsub back to modified_html
     if err_msg and err_msg ~= "" then
         modified_html = modified_html:gsub('id="error%-alert" class="alert alert%-danger d%-none"', 'id="error-alert" class="alert alert-danger"')
     end
-    
+
     ngx.header.content_type = "text/html"
     ngx.status = res_status
     ngx.say(modified_html)

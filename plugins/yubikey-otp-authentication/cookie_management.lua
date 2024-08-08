@@ -1,6 +1,6 @@
 -- Cookie Management Module
 -- Functions related to cookie generation and parsing.
--- 
+--
 
 local _M = {}
 
@@ -40,8 +40,17 @@ function _M.build_http_cookie(i)
     -- Generate our cookie json structure with new hash
     local cookie_value = generate_cookie(i, domain, expires)
 
-    local set_cookie = string.format("%s=%s; Path=/; Expires=%s; HttpOnly; Domain %s; SameSite=%s; %s", env.cookie_name, cookie_value, expires, domain, env.cookie_samesite, env.cookie_secure)
-    return set_cookie
+    local cookie_string = table.concat({
+        env.cookie_name .. "=" .. cookie_value,
+        "Path=/",
+        "Expires=" .. expires,
+        "HttpOnly",
+        "Domain=" .. domain,
+        "SameSite=" .. env.cookie_samesite,
+        env.cookie_secure
+    }, "; ")
+
+    return cookie_string
 end
 
 -- decodes the base64 cookie and validates the hash based on provided and known info
@@ -58,7 +67,7 @@ function _M.validate_cookie(i)
         return false, "Cookie expired"
     end
     local cookie_hash = generate_cookie_hash(cookie_raw_json[env.key], cookie_raw_json.domain, cookie_raw_json.expires)
-    if not (cookie_hash == cookie_raw_json.hash) then
+    if cookie_hash ~= cookie_raw_json.hash then
         return false, "Cookie signature mismatch"
     end
     return true, cookie_raw_json

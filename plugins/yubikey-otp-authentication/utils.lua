@@ -1,6 +1,6 @@
 -- General Utils
 -- A tool set for this plugin
--- 
+--
 
 local _M = {}
 local ngx = require "ngx"
@@ -19,7 +19,7 @@ function _M.generate_nonce()
 
     local length = math.random(16, 40)
     local nonce = ""
-    for i = 1, length do
+    for _ = 1, length do
         nonce = nonce .. random_char()
     end
     return nonce

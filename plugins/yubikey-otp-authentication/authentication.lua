@@ -3,8 +3,7 @@
 --
 
 local _M = {}
-local ngx = require "ngx"
-local string = require "string"
+
 local yubikey = require "yubikey-otp-authentication.yubikey"
 
 function _M.verify(i)

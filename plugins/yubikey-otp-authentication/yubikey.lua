@@ -1,6 +1,6 @@
 -- YubiKey Logic Module
 -- This module contains all functions needed for yubikey specific functions.
--- 
+--
 
 local _M = {}
 local ngx = require "ngx"
@@ -72,7 +72,7 @@ local function is_valid_otp(res_body, otp)
         local msg = "OTP length issue"
         return false, msg
     end
-    
+
     -- Check if the OTP matches in the response body
     if string.match(res_body, "otp=" .. otp) == nil then
         local msg = "OTP mismatch"
@@ -85,7 +85,12 @@ end
 -- Make HTTP request to Yubico API
 local function yubico_verification_server(otp, request_id, nonce)
     local httpc = http.new()
-    local uri = string.format("https://%s/wsapi/2.0/verify?id=%s&otp=%s&nonce=%s", choose_random_lb_address(), request_id, otp, nonce)
+    local uri = string.format("https://%s/wsapi/2.0/verify?id=%s&otp=%s&nonce=%s",
+        choose_random_lb_address(),
+        request_id,
+        otp,
+        nonce
+    )
     local res, err = httpc:request_uri(uri, {
         method = "GET",
         headers = {
@@ -116,17 +121,17 @@ function _M.verify(otp)
     end
 
     -- Run validation checks against http response
-    local valid, validity_err = is_valid_http_response(res, nonce)
-    if not valid then
-        return false, ngx.HTTP_INTERNAL_SERVER_ERROR, validity_err
+    local valid_http, validity_err_http = is_valid_http_response(res, nonce)
+    if not valid_http then
+        return false, ngx.HTTP_INTERNAL_SERVER_ERROR, validity_err_http
     end
 
     -- Run validation checks against provided otp and servers
-    local valid, validity_err = is_valid_otp(res, otp)
-    if not valid then
-        return false, ngx.HTTP_BAD_REQUEST, validity_err
+    local valid_chk, validity_err_chk = is_valid_otp(res, otp)
+    if not valid_chk then
+        return false, ngx.HTTP_BAD_REQUEST, validity_err_chk
     end
-    
+
     -- Check if the YubiKey is authorized
     if not is_authorized_yubikey(otp) then
         return false, ngx.HTTP_FORBIDDEN, "Unauthorized YubiKey"

@@ -1,6 +1,6 @@
 -- Core
 -- Run these file to execute the plugin
--- 
+--
 
 local ngx = require "ngx"
 local string = require "string"
@@ -10,13 +10,13 @@ local process = require "yubikey-otp-authentication.request_processes"
 local utils = require "yubikey-otp-authentication.utils"
 
 local function run()
-    -- Grab cookie in all requests, 
+    -- Grab cookie in all requests
     local auth_cookie = ngx.var["cookie_" .. env.cookie_name]
-    
+
     local request
-    -- In this if statement we check the POST with the uri to ensure 
+    -- In this if statement we check the POST with the uri to ensure
     if ngx.req.get_method() == "POST" and ngx.var.uri == "/" then
-        ngx.req.read_body() 
+        ngx.req.read_body()
         local err
         request, err = ngx.req.get_post_args()
         if not request then
@@ -25,7 +25,7 @@ local function run()
             login.display_login_portal(ngx.HTTP_BAD_REQUEST, display_err)
         end
     end
-   
+
     -- When a POST occurs with an key value, we need to validate it and generate a cookie
     if request and request[env.key] then
         -- Generate our cookie using custom algorithms

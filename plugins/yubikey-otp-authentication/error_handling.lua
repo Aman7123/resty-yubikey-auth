@@ -1,6 +1,6 @@
 -- Error
 -- All error messages are handled here
--- 
+--
 
 local _M = {}
 

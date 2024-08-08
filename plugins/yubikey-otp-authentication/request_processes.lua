@@ -1,6 +1,6 @@
 -- Main Checkpoints
---  To reduce the amount of logic in the main function, we have broken these functions out
--- 
+-- To reduce the amount of logic in the main function, we have broken these functions out
+--
 
 local _M = {}
 
