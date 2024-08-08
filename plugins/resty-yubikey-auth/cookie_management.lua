@@ -8,7 +8,7 @@ local ngx = require "ngx"
 local cjson = require "cjson"
 local resty_sha256 = require "resty.sha256"
 local resty_str = require "resty.string"
-local env = require "yubikey-otp-authentication.env"
+local env = require "resty-yubikey-auth.env"
 
 local function generate_cookie_hash(i, domain, expires)
     local sha256 = resty_sha256:new()

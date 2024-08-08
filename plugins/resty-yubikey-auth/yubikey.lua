@@ -6,8 +6,8 @@ local _M = {}
 local ngx = require "ngx"
 local math = require "math"
 local http = require "resty.http"
-local utils = require "yubikey-otp-authentication.utils"
-local env = require "yubikey-otp-authentication.env"
+local utils = require "resty-yubikey-auth.utils"
+local env = require "resty-yubikey-auth.env"
 
 -- Function to pull random url
 local function choose_random_lb_address()

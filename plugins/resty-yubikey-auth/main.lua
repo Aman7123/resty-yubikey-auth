@@ -4,10 +4,10 @@
 
 local ngx = require "ngx"
 local string = require "string"
-local env = require "yubikey-otp-authentication.env"
-local login = require "yubikey-otp-authentication.login_page"
-local process = require "yubikey-otp-authentication.request_processes"
-local utils = require "yubikey-otp-authentication.utils"
+local env = require "resty-yubikey-auth.env"
+local login = require "resty-yubikey-auth.login_page"
+local process = require "resty-yubikey-auth.request_processes"
+local utils = require "resty-yubikey-auth.utils"
 
 local function run()
     -- Grab cookie in all requests

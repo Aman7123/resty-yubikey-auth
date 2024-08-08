@@ -5,9 +5,9 @@
 local _M = {}
 
 local ngx = require "ngx"
-local env = require "yubikey-otp-authentication.env"
-local cookie = require "yubikey-otp-authentication.cookie_management"
-local auth = require "yubikey-otp-authentication.authentication"
+local env = require "resty-yubikey-auth.env"
+local cookie = require "resty-yubikey-auth.cookie_management"
+local auth = require "resty-yubikey-auth.authentication"
 
 -- This function helps break up so much logic in the main function.
 -- Function is called after the login page is displayed and a POST request is made

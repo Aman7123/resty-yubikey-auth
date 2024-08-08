@@ -5,9 +5,9 @@
 local _M = {}
 
 local ngx = require "ngx"
-local env = require "yubikey-otp-authentication.env"
-local utils = require "yubikey-otp-authentication.utils"
-local favicon = require "yubikey-otp-authentication.favicon"
+local env = require "resty-yubikey-auth.env"
+local utils = require "resty-yubikey-auth.utils"
+local favicon = require "resty-yubikey-auth.favicon"
 
 local script_block = [[
     document.getElementById('login-form').addEventListener('submit', function(event) {

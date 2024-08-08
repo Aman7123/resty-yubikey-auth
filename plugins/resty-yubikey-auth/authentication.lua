@@ -4,7 +4,7 @@
 
 local _M = {}
 
-local yubikey = require "yubikey-otp-authentication.yubikey"
+local yubikey = require "resty-yubikey-auth.yubikey"
 
 function _M.verify(i)
     local ok, err_code, err_msg = yubikey.verify(i)

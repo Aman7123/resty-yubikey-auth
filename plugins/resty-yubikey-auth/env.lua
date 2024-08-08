@@ -6,7 +6,7 @@ local _M = {}
 
 -- TODO: Migrate away from syscall for envvar
 local os = require "os"
-local errors = require "yubikey-otp-authentication.error_handling"
+local errors = require "resty-yubikey-auth.error_handling"
 
 _M.key = "otp"
 _M.key_length = 44

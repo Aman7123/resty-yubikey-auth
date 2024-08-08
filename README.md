@@ -31,7 +31,7 @@ server {
     access_log /usr/local/openresty/nginx/logs/otp-access.log main;
 
     # Configure OTP auth
-    access_by_lua_file /usr/local/openresty/nginx/lua/plugins/yubikey-otp-authentication/main.lua;
+    access_by_lua_file /usr/local/openresty/nginx/lua/plugins/resty-yubikey-auth/main.lua;
 
     location / {
         proxy_pass http://localhost:8080$request_uri;
