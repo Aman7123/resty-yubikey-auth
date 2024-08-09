@@ -39,25 +39,28 @@ jobs:
         echo "Found rockspec file: $rockspec_file"
         echo "::set-output name=rockspec_file::$rockspec_file"
 
-    - name: Get Semantic Version from .rockspec
-      id: get_version
+    - name: Get App Version, Name, and Combined Variable from Lua File
+      id: get_version_and_name
       run: |
-        FULL_VERSION=$(grep -oP '(?<=^version = ")[^"]*' ${{ steps.find_rockspec.outputs.rockspec_file }})
-        SEMVER=$(echo "$FULL_VERSION" | sed 's/-[0-9]*$//')
-        echo "Full Version: $FULL_VERSION"
-        echo "Semantic Version: $SEMVER"
-        echo "::set-output name=semver::$SEMVER"
+        NAME=$(grep -oP '(?<=^local name = ")[^"]*' config.lua)
+        APP_VERSION=$(grep -oP '(?<=^local app_version = ")[^"]*' config.lua)
+        NAME_VERSION="${NAME}-${APP_VERSION}"
+        echo "Name: $NAME"
+        echo "App Version: $APP_VERSION"
+        echo "Name and Version: $NAME_VERSION"
+        echo "::set-output name=name::$NAME"
+        echo "::set-output name=app_version::$APP_VERSION"
+        echo "::set-output name=name_version::$NAME_VERSION"
 
-    - name: Build LuaRocks Package
+    - name: Build Package
       run: |
-        luarocks make
-        luarocks pack ${{ steps.find_rockspec.outputs.rockspec_file }}
+        tar czf ${{ steps.get_version_and_name.outputs.name_version }}.tar.gz README.md ${{ steps.find_rockspec.outputs.rockspec_file }} lua/
 
     - name: Upload Rock to GitHub
       uses: actions/upload-artifact@v4
       with:
         name: resty-yubikey-auth-rock
-        path: "*.rock"
+        path: "${{ steps.get_version_and_name.outputs.name_version }}.tar.gz"
 
     # - name: Create GitHub Release
     #   uses: actions/create-release@v1
