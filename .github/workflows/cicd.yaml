@@ -35,8 +35,8 @@ jobs:
     - name: Get App Version, Name, and Combined Variable from Lua File
       id: get_version_and_name
       run: |
-        NAME=$(grep -oP '(?<=^local name = ")[^"]*' config.lua)
-        APP_VERSION=$(grep -oP '(?<=^local app_version = ")[^"]*' config.lua)
+        NAME=$(grep -oP '(?<=^local name = ")[^"]*' ${{ steps.find_rockspec.outputs.rockspec_file }})
+        APP_VERSION=$(grep -oP '(?<=^local app_version = ")[^"]*' ${{ steps.find_rockspec.outputs.rockspec_file }})
         NAME_VERSION="${NAME}-${APP_VERSION}"
         echo "Name: $NAME"
         echo "App Version: $APP_VERSION"
