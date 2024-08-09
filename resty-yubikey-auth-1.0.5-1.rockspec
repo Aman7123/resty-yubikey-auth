@@ -1,7 +1,7 @@
 package = "resty-yubikey-auth"
 version = "1.0.5-1"
 source = {
-    url = "https://github.com/Aman7123/resty-yubikey-auth/archive/v1.0.5.tar.gz"
+    url = "."
 }
 description = {
     summary = "Yubikey OTP Authentication plugin for OpenResty",

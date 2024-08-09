@@ -39,14 +39,41 @@ jobs:
         echo "Found rockspec file: $rockspec_file"
         echo "::set-output name=rockspec_file::$rockspec_file"
 
+    - name: Get Version from .rockspec
+      id: get_version
+      run: |
+        VERSION=$(grep -oP '(?<=^version = ")[^"]*' ${{ steps.find_rockspec.outputs.rockspec_file }})
+        echo "Version: $VERSION"
+        echo "::set-output name=version::$VERSION"
+
     - name: Build LuaRocks Package
       run: |
+        luarocks make
         luarocks pack ${{ steps.find_rockspec.outputs.rockspec_file }}
-        mkdir -p rocks
-        mv *.rock rocks/
 
     - name: Upload Rock to GitHub
       uses: actions/upload-artifact@v4
       with:
         name: resty-yubikey-auth-rock
-        path: rocks/
+        path: "*.rock"
+
+    # - name: Create GitHub Release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: "v${{ steps.get_version.outputs.version }}"
+    #     release_name: "Release v${{ steps.get_version.outputs.version }}"
+    #     draft: false
+    #     prerelease: false
+    #     body: "Automated release of version ${{ steps.get_version.outputs.version }}."
+
+    # - name: Upload .rock File to Release
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: rocks/*.rock
+    #     asset_name: resty-yubikey-auth-${{ steps.get_version.outputs.version }}.rock
+    #     asset_content_type: application/x-tar
