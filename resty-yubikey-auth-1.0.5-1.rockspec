@@ -6,7 +6,7 @@ local developer = "Aman7123"
 local repo = developer .. "/" .. name
 
 local code_path = "lua/plugins"
-local full_code_path = "lua/plugins/"..name
+local full_code_path = code_path.. "/" ..name
 
 package = name
 version = app_version .. "-" .. rockspec_revision

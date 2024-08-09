@@ -15,19 +15,6 @@ jobs:
       with:
         luaVersion: '5.1'
 
-    - uses: leafo/gh-actions-luarocks@v4
-
-    - name: Install Dependencies
-      run: |
-        luarocks install luasec
-        luarocks install luafilesystem
-        luarocks install luasocket
-        luarocks install luacheck
-        luarocks install lua-cjson
-        luarocks install penlight
-        luarocks install lua-resty-http
-        luarocks install lua-resty-string
-
     - name: Lint Code with Luacheck
       run: |
         luacheck . --no-color --exclude-files ".*"
