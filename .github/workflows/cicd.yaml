@@ -35,7 +35,7 @@ jobs:
     - name: Find .rockspec File
       id: find_rockspec
       run: |
-        rockspec_file=$(find . -name "*.rockspec" | head -n 1)
+        rockspec_file=$(find . -maxdepth 1 -name "*.rockspec" | head -n 1)
         echo "Found rockspec file: $rockspec_file"
         echo "::set-output name=rockspec_file::$rockspec_file"
 
@@ -46,7 +46,7 @@ jobs:
         mv *.rock rocks/
 
     - name: Upload Rock to GitHub
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: resty-yubikey-auth-rock
         path: rocks/
