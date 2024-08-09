@@ -10,9 +10,6 @@ local full_code_path = code_path.. "/" ..name
 
 package = name
 version = app_version .. "-" .. rockspec_revision
-source = {
-    url = "git+https://github.com/" .. repo .. ".git"
-}
 description = {
     summary = "Yubikey OTP Authentication plugin for OpenResty",
     detailed = "A Lua plugin for OpenResty to authenticate users using Yubikey OTP.",
