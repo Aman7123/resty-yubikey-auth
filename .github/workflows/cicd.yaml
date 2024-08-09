@@ -30,7 +30,7 @@ jobs:
 
     - name: Lint Code with Luacheck
       run: |
-        luacheck . --no-color --exclude-files .**/**
+        luacheck . --no-color --exclude-files .*/**
 
     - name: Build LuaRocks Package
       run: |
