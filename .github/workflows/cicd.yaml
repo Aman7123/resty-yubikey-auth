@@ -39,12 +39,14 @@ jobs:
         echo "Found rockspec file: $rockspec_file"
         echo "::set-output name=rockspec_file::$rockspec_file"
 
-    - name: Get Version from .rockspec
+    - name: Get Semantic Version from .rockspec
       id: get_version
       run: |
-        VERSION=$(grep -oP '(?<=^version = ")[^"]*' ${{ steps.find_rockspec.outputs.rockspec_file }})
-        echo "Version: $VERSION"
-        echo "::set-output name=version::$VERSION"
+        FULL_VERSION=$(grep -oP '(?<=^version = ")[^"]*' resty-yubikey-auth.rockspec)
+        SEMVER=$(echo "$FULL_VERSION" | sed 's/-[0-9]*$//')
+        echo "Full Version: $FULL_VERSION"
+        echo "Semantic Version: $SEMVER"
+        echo "::set-output name=semver::$SEMVER"
 
     - name: Build LuaRocks Package
       run: |
