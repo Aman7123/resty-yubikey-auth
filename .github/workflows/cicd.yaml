@@ -15,6 +15,12 @@ jobs:
       with:
         luaVersion: '5.1'
 
+    - uses: leafo/gh-actions-luarocks@v4
+
+    - name: Install Dependencies
+      run: |
+        luarocks install luacheck
+
     - name: Lint Code with Luacheck
       run: |
         luacheck . --no-color --exclude-files ".*"
