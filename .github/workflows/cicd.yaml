@@ -30,11 +30,18 @@ jobs:
 
     - name: Lint Code with Luacheck
       run: |
-        luacheck . --no-color --exclude-files .*/**
+        luacheck . --no-color --exclude-files ".*"
+
+    - name: Find .rockspec File
+      id: find_rockspec
+      run: |
+        rockspec_file=$(find . -name "*.rockspec" | head -n 1)
+        echo "Found rockspec file: $rockspec_file"
+        echo "::set-output name=rockspec_file::$rockspec_file"
 
     - name: Build LuaRocks Package
       run: |
-        luarocks pack .rockspec
+        luarocks pack ${{ steps.find_rockspec.outputs.rockspec_file }}
         mkdir -p rocks
         mv *.rock rocks/
 
