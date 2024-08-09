@@ -8,14 +8,14 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Lua 5.1
       uses: leafo/gh-actions-lua@v10
       with:
         luaVersion: '5.1'
 
-    - uses: leafo/gh-actions-luarocks@v4
+    - uses: leafo/gh-actions-luarocks@v4.3.0
 
     - name: Install Dependencies
       run: |
@@ -30,7 +30,7 @@ jobs:
       run: |
         rockspec_file=$(find . -maxdepth 1 -name "*.rockspec" | head -n 1)
         echo "Found rockspec file: $rockspec_file"
-        echo "::set-output name=rockspec_file::$rockspec_file"
+        echo "rockspec_file=$rockspec_file" >> $GITHUB_OUTPUT
 
     - name: Get App Version, Name, and Combined Variable from Lua File
       id: get_version_and_name
@@ -41,9 +41,9 @@ jobs:
         echo "Name: $NAME"
         echo "App Version: $APP_VERSION"
         echo "Name and Version: $NAME_VERSION"
-        echo "::set-output name=name::$NAME"
-        echo "::set-output name=app_version::$APP_VERSION"
-        echo "::set-output name=name_version::$NAME_VERSION"
+        echo "name=$NAME" >> $GITHUB_OUTPUT
+        echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
+        echo "name_version=$NAME_VERSION" >> $GITHUB_OUTPUT
 
     - name: Build Package
       run: |
@@ -54,6 +54,7 @@ jobs:
       with:
         name: resty-yubikey-auth-rock
         path: "${{ steps.get_version_and_name.outputs.name_version }}.tar.gz"
+
 
     # - name: Create GitHub Release
     #   uses: actions/create-release@v1
