@@ -13,7 +13,7 @@ jobs:
     - name: Set up Lua 5.1
       uses: leafo/gh-actions-lua@v10
       with:
-        luaVersion: '5.1'
+        "5.1.5"
 
     - name: Install Dependencies
       run: |
