@@ -56,8 +56,13 @@ jobs:
           echo "Tag already exists"
           echo "tag_exists=true" >> $GITHUB_OUTPUT
         else
+          echo "Tag does not exist"
           echo "tag_exists=false" >> $GITHUB_OUTPUT
         fi
+
+    - name: Output Tag Existence Check
+      run: |
+        echo "Tag exists: ${{ steps.tag_exists.outputs.tag_exists }}"
 
     - name: Create Git Tag
       if: steps.tag_exists.outputs.tag_exists == 'false'
