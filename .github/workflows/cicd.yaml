@@ -1,0 +1,108 @@
+name: CI/CD Pipeline
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Lua 5.1
+      uses: leafo/gh-actions-lua@v10
+      with:
+        luaVersion: '5.1'
+
+    - uses: leafo/gh-actions-luarocks@v4
+
+    - name: Install Dependencies
+      run: |
+        luarocks install luacheck
+
+    - name: Lint Code with Luacheck
+      run: |
+        luacheck . --no-color --exclude-files ".*"
+
+    - name: Find .rockspec File
+      id: find_rockspec
+      run: |
+        rockspec_file=$(find . -maxdepth 1 -name "*.rockspec" | head -n 1)
+        echo "Found rockspec file: $rockspec_file"
+        echo "rockspec_file=$rockspec_file" >> $GITHUB_OUTPUT
+
+    - name: Get App Version, Name, and Combined Variable from Lua File
+      id: get_version_and_name
+      run: |
+        NAME=$(grep -oP '(?<=^local name = ")[^"]*' ${{ steps.find_rockspec.outputs.rockspec_file }})
+        APP_VERSION=$(grep -oP '(?<=^local app_version = ")[^"]*' ${{ steps.find_rockspec.outputs.rockspec_file }})
+        NAME_VERSION="${NAME}-${APP_VERSION}"
+        echo "Name: $NAME"
+        echo "App Version: $APP_VERSION"
+        echo "Name and Version: $NAME_VERSION"
+        echo "name=$NAME" >> $GITHUB_OUTPUT
+        echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
+        echo "name_version=$NAME_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Build Package
+      run: |
+        tar czf ${{ steps.get_version_and_name.outputs.name_version }}.tar.gz README.md ${{ steps.find_rockspec.outputs.rockspec_file }} lua/
+
+    - name: Fetch All Tags
+      if: github.ref == 'refs/heads/main'
+      run: git fetch --tags
+
+    - name: Check if Tag Already Exists
+      if: github.ref == 'refs/heads/main'
+      id: tag_exists
+      run: |
+        if git rev-parse "v${{ steps.get_version_and_name.outputs.app_version }}" >/dev/null 2>&1; then
+          echo "Tag already exists"
+          echo "tag_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "Tag does not exist"
+          echo "tag_exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Output Tag Existence Check
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "Tag exists: ${{ steps.tag_exists.outputs.tag_exists }}"
+
+    - name: Create Git Tag
+      if: github.ref == 'refs/heads/main' && steps.tag_exists.outputs.tag_exists == 'false'
+      id: create_tag
+      run: |
+        git tag "v${{ steps.get_version_and_name.outputs.app_version }}"
+        git push origin "v${{ steps.get_version_and_name.outputs.app_version }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create GitHub Release and Upload Asset
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          ${{ steps.get_version_and_name.outputs.name_version }}.tar.gz
+          README.md
+        tag_name: "v${{ steps.get_version_and_name.outputs.app_version }}"
+        generate_release_notes: true
+        fail_on_unmatched_files: true
+        make_latest: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Sanitize Branch Name
+      id: sanitize_branch_name
+      run: |
+        SANITIZED_BRANCH_NAME=$(echo "${GITHUB_REF_NAME}" | sed 's/[\/:*?"<>|]/-/g')
+        echo "sanitized_branch_name=${SANITIZED_BRANCH_NAME}" >> $GITHUB_OUTPUT
+
+    - name: Upload Artifact for Non-Main Branches
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.get_version_and_name.outputs.name_version }}-${{ steps.sanitize_branch_name.outputs.sanitized_branch_name }}.tar.gz
+        path: ${{ steps.get_version_and_name.outputs.name_version }}.tar.gz
+        compression-level: 0
