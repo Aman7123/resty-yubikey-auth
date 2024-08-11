@@ -15,7 +15,7 @@ jobs:
       with:
         luaVersion: '5.1'
 
-    - uses: leafo/gh-actions-luarocks@v4.3.0
+    - uses: leafo/gh-actions-luarocks@v4
 
     - name: Install Dependencies
       run: |
@@ -58,12 +58,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create GitHub Release and Upload Asset
-      uses: softprops/action-gh-release@v2.0.8
+      uses: softprops/action-gh-release@v2
       with:
-        files: ${{ steps.get_version_and_name.outputs.name_version }}.tar.gz
+        files: |
+          ${{ steps.get_version_and_name.outputs.name_version }}.tar.gz
+          README.md
+        tag_name: "v${{ steps.get_version_and_name.outputs.app_version }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: "v${{ steps.get_version_and_name.outputs.app_version }}"
-        RELEASE_NAME: "Release v${{ steps.get_version_and_name.outputs.app_version }}"
-        DRAFT: false
-        PRERELEASE: false
