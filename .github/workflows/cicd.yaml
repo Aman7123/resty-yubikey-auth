@@ -49,6 +49,9 @@ jobs:
       run: |
         tar czf ${{ steps.get_version_and_name.outputs.name_version }}.tar.gz README.md ${{ steps.find_rockspec.outputs.rockspec_file }} lua/
 
+    - name: Fetch All Tags
+      run: git fetch --tags
+
     - name: Check if Tag Already Exists
       id: tag_exists
       run: |
