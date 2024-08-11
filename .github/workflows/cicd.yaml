@@ -93,10 +93,16 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Sanitize Branch Name
+      id: sanitize_branch_name
+      run: |
+        SANITIZED_BRANCH_NAME=$(echo "${GITHUB_REF_NAME}" | sed 's/[\/:*?"<>|]/-/g')
+        echo "sanitized_branch_name=${SANITIZED_BRANCH_NAME}" >> $GITHUB_OUTPUT
+
     - name: Upload Artifact for Non-Main Branches
       if: github.ref != 'refs/heads/main'
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.get_version_and_name.outputs.name_version }}-${{ github.ref_name }}.tar.gz
+        name: ${{ steps.get_version_and_name.outputs.name_version }}-${{ steps.sanitize_branch_name.outputs.sanitized_branch_name }}.tar.gz
         path: ${{ steps.get_version_and_name.outputs.name_version }}.tar.gz
         compression-level: 0
