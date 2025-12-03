@@ -44,7 +44,7 @@ local html_body = [[
                                 <h2 class="text-center mb-4">{{NAME}} Login</h2>
                                 <div class="form-group">
                                     <!-- Adjusted input style for consistency -->
-                                    <input type="text" id="{{name}}" name="{{name}}" class="form-control" placeholder="Enter {{NAME}}" required autofocus style="width: 100%;">
+                                    <input type="text" id="{{name}}" name="{{name}}" class="form-control" placeholder="Enter {{NAME}}" required autofocus style="width: 100%;" autocomplete="new-password" autocapitalize="off" spellcheck="false">
                                 </div>
                                 <button class="btn btn-success btn-block" type="submit">Submit</button>
                             </form>

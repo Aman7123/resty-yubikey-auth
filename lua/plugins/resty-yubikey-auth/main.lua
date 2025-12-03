@@ -10,15 +10,22 @@ local process = require "resty-yubikey-auth.request_processes"
 local utils = require "resty-yubikey-auth.utils"
 
 local function run()
+    -- First line hit in the code "plugin"
     -- Grab cookie in all requests
+    -- This cookie can be provided in subsequent requests for authentication
     local auth_cookie = ngx.var["cookie_" .. env.cookie_name]
 
     local request
-    -- In this if statement we check the POST with the uri to ensure
+    -- Traditionally a POST carries data into a microservice, follow RESTful design
+    -- In this if statement we check the POST with to ensure good intensions when logging in
+    -- Nothing but validation within this if check
     if ngx.req.get_method() == "POST" and ngx.var.uri == "/" then
+        -- Ask nginx to load in request body to accessible memory
         ngx.req.read_body()
         local err
+        -- Grab request body info in table form
         request, err = ngx.req.get_post_args()
+        -- Run a quick check to ensure someone is actually putting in effort to interact
         if not request then
             local display_err = string.format("Failed: %s", err)
             ngx.log(ngx.ERR, display_err)
